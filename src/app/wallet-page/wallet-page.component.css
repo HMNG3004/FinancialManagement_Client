@@ -1,0 +1,24 @@
+.selected {
+  background-color: #048136;
+  color: #FFF;
+}
+
+.selected fa-icon {
+  color: #FFF;
+}
+
+.selected h5 {
+  color: #FFF;
+}
+
+.nonSelected:hover {
+  background-color: #048136;
+}
+
+.nonSelected:hover fa-icon {
+  color: #FFF;
+}
+
+.nonSelected:hover h5 {
+  color: #FFF;
+}

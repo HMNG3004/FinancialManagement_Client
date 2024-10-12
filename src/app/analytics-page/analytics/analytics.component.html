@@ -1,0 +1,13 @@
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 my-4">
+  <div *ngFor="let item of statisticItem"
+       class="flex flex-col justify-center rounded-lg border-2 dark:bg-gray-800 bg-white p-4">
+    <div class="w-full px-4 space-y-1">
+      <p class="text-[#2C3E50] text-lg font-medium">{{ item.label }}</p>
+      <p class="text-[#2C3E50] text-2xl font-bold">{{ NumberFormat(item.value) }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="w-full">
+  <p-chart type="bar" [data]="data" [options]="options" />
+</div>

@@ -1,0 +1,73 @@
+<p class="text-lg font-normal text-gray-700">Expense break down</p>
+<div class="relative">
+  <nz-date-picker nzMode="month" [(ngModel)]="date" (ngModelChange)="onChange($event)" [nzFormat]="monthFormat"
+                  class="h-10 w-fit bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></nz-date-picker>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4 my-4 place-items-start grid-auto-rows">
+  <div *ngIf="breakDownList.length > 0; else emptyState">
+    <div *ngFor="let item of breakDownList" class="flex flex-col justify-center dark:bg-gray-800 w-full">
+      <div class="w-full rounded-t-lg bg-[#e8e8e8] flex items-center justify-between px-4 py-3">
+        <div class="flex flex-col">
+          <p class="text-lg font-medium text-[#666666]">
+            {{ item.budgetName }}
+          </p>
+          <p class="text-lg font-bold">{{ NumberFormat(item.totalAmount) }}</p>
+        </div>
+        <div class="flex">
+          <div class="flex flex-col items-end justify-center">
+            <div class="flex items-end justify-end space-x-2">
+              <p class="font-semibold text-[#666666]">{{ item.percentComparedToLastMonth }}%</p>
+              <fa-icon *ngIf="item.isIncreased" [icon]="faArrowUp"
+                       size="lg"
+                       class="text-[#2ECC71] transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+              </fa-icon>
+              <fa-icon *ngIf="!item.isIncreased" [icon]="faArrowDown"
+                       size="lg"
+                       class="text-[#FA0F00] transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+              </fa-icon>
+            </div>
+            <p class="text-lg font-light text-[#666666]">Compare to last month</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Expense Items Table -->
+  <div class="col-span-2 w-full">
+    <nz-table #nestedTable [nzData]="groupedExpenses" [nzPageSize]="10" [nzShowPagination]="expenseList.length > 10">
+      <thead>
+      <tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Wallet</th>
+        <th>Type</th>
+        <th>Budget</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (expenseItem of expenseList; track expenseItem) {
+          <tr>
+            <td>{{ dayjs(expenseItem.expenseDate).format('DD MMM YYYY') }}</td>
+            <td>{{ expenseItem.expenseDescription }}</td>
+            <td>{{ expenseItem.expenseAmount | currency }}</td>
+            <td>{{ expenseItem.fromWalletName }}</td>
+            <td>{{ expenseItem.expenseTypeName }}</td>
+            <td>{{ expenseItem.fromBudgetName }}</td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+
+
+  </div>
+
+</div>
+
+<!-- Empty state template -->
+<ng-template #emptyState>
+  <div class="text-center py-10">
+    <p class="text-lg font-medium text-gray-500">No expenses available for the selected month.</p>
+  </div>
+</ng-template>

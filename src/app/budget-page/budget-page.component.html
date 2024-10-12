@@ -1,0 +1,126 @@
+<div class="dark:border-gray-700">
+  <h1 class="text-3xl font-bold text-gray-800">Budget</h1>
+  <p class="text-lg font-normal text-gray-700">Welcome to IFM Financial Management</p>
+
+  <mat-tab-group class="custom-tab-group" [(selectedIndex)]="currentMonthIndex"
+                 (selectedTabChange)="onMonthChange($event)">
+    <mat-tab *ngFor="let month of months" [label]="month">
+      <div class="p-4">
+        <div *ngIf="budgetListIsLoading" class="flex justify-center items-center h-screen">
+          <nz-spin nzSimple [nzSize]="'large'" nzTip="Loading..."></nz-spin>
+        </div>
+        <div class="flex flex-col items-center" *ngIf="!budgetListIsLoading && budgetList.length == 0">
+          <nz-empty [nzNotFoundContent]="emptyText"></nz-empty>
+          <button type="button"
+                  (click)="toggleCreateModal()"
+                  class="text-white bg-[#299D91] font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+            Re-create budgets
+<!--            <fa-icon [icon]="faChevronRight"-->
+<!--                     size="1x"-->
+<!--                     class="text-white transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white ml-3">-->
+<!--            </fa-icon>-->
+          </button>
+        </div>
+        <div *ngIf="!budgetListIsLoading && budgetList.length > 0"
+             class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 place-items-stretch auto-rows-fr">
+          <div *ngFor="let item of budgetList; let i = index"
+               class="flex flex-col rounded-lg justify-center dark:bg-gray-800 bg-white w-full h-full">
+            <div class="w-full rounded-t-lg flex items-center justify-between px-4 py-3">
+              <div class="w-full flex justify-between border-b-2 py-3">
+                <div class="font-bold text-lg text-[#878787]">
+                  {{ item.budgetName }}
+                </div>
+                <div class="font-medium text-normal text-[#666666]">
+                </div>
+              </div>
+            </div>
+            <div class="w-full flex flex-col rounded-b-lg justify-start px-4 py-3 space-y-5">
+              <div>
+                <p class="font-semibold text-lg">
+                  {{ NumberFormat(item.budgetAmount) }}
+                </p>
+                <p class="font-medium text-[#9F9F9F]">
+                  Total amount
+                </p>
+              </div>
+
+              <div class="w-full flex justify-between">
+                <div class="text-start">
+                  <p class="font-semibold text-lg text-[#299D91]">
+                    {{ NumberFormat(item.currentSpent) }}
+                  </p>
+                  <p class="font-medium text-[#9F9F9F]">
+                    Current spend
+                  </p>
+                </div>
+                <div class="text-end">
+                  <p class="font-semibold text-lg text-red-600">
+                    {{ NumberFormat(item.budgetAmount - item.currentSpent) }}
+                  </p>
+                  <p class="font-medium text-[#9F9F9F]">
+                    Remaining budget
+                  </p>
+                </div>
+              </div>
+
+              <div class="w-full h-3 bg-gray-200 rounded-full dark:bg-gray-700">
+                <div class="bg-[#299D91] h-3 rounded-full"
+                     [style.width.%]="item.currentSpent / item.budgetAmount * 100"></div>
+              </div>
+
+              <div class="flex justify-between mt-4">
+                <button class="text-[#299D91] text-lg font-medium mr-4" (click)="toggleDeleteModal()">
+                  Remove
+                </button>
+                <button type="button"
+                        (click)="handleDetailsButtonClicked(item.budgetId)"
+                        class="text-white bg-[#299D91] font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                  Details
+                  <fa-icon [icon]="faChevronRight"
+                           size="1x"
+                           class="text-white transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white ml-3">
+                  </fa-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col rounded-lg justify-center items-center dark:bg-gray-800 bg-white w-full h-full">
+            <button type="button"
+                    (click)="toggleCreateModal()"
+                    class="flex items-center text-white bg-[#299D91] font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2">
+              Create New Budget
+              <fa-icon [icon]="faPlus"
+                       size="1x"
+                       class="text-white transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white ml-3">
+              </fa-icon>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="showCreateCard"
+             class="flex flex-col rounded-lg justify-center items-center dark:bg-gray-800 h-full">
+          <button type="button"
+                  (click)="toggleCreateModal()"
+                  class="flex items-center text-white bg-[#299D91] font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2">
+            Create New Budget
+            <fa-icon [icon]="faPlus"
+                     size="1x"
+                     class="text-white transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white ml-3">
+            </fa-icon>
+          </button>
+        </div>
+
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+
+</div>
+
+<div *ngIf="!isCreateModalOpen" (click)="handleCreateOverlayClick($event)"
+     class="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50">
+  <app-budget-create
+    class="w-4/5"
+    [isCreateModalOpen]="isCreateModalOpen"
+    (closeModal)="toggleCreateModal()"
+    (budgetCreated)="onWalletCreated()"></app-budget-create>
+</div>

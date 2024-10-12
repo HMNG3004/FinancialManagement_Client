@@ -1,0 +1,177 @@
+<div class="dark:border-gray-700">
+  <h1 class="text-3xl font-bold text-gray-800">Wallet details</h1>
+  <p class="text-lg font-normal text-gray-700">Welcome to IFM Financial Management</p>
+  <div class="bg-white shadow-xl rounded-lg">
+    <div class="grid grid-cols-2 md:grid-cols-3 p-6">
+      <div class="wallet-information-container">
+        <p class="wallet-information-title">Wallet name</p>
+        <p [hidden]="isUpdated" class="wallet-information-value">{{ walletDetailInformation.walletName }}</p>
+        <input [hidden]="!isUpdated" type="text" id="walletName" name="walletName" #walletName="ngModel"
+               [(ngModel)]="walletDetailInformation.walletName"
+               class="bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+               required/>
+        <div *ngIf="walletName.invalid && (walletName.dirty || walletName.touched)" class="text-red-600 text-sm">
+          <div *ngIf="walletName.errors?.['required']">Name is required.</div>
+        </div>
+      </div>
+      <div class="wallet-information-container">
+        <p class="wallet-information-title">Wallet type</p>
+        <p [hidden]="isUpdated" class="wallet-information-value">{{ walletDetailInformation.walletTypeName }}</p>
+        <select [hidden]="!isUpdated" id="walletTypeId"
+                name="walletTypeId" [(ngModel)]="walletDetailInformation.walletTypeId"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <option *ngFor="let item of walletTypeList" [value]="item.walletTypeId">{{ item.walletTypeName }}</option>
+        </select>
+      </div>
+      <div class="wallet-information-container">
+        <p class="wallet-information-title">Balance</p>
+        <p [hidden]="isUpdated"
+           class="wallet-information-value">{{ NumberFormat(walletDetailInformation.walletBalance) }}</p>
+        <input [hidden]="!isUpdated" type="text" id="walletBalance" name="walletBalance"
+               value="{{ walletDetailInformation.walletBalance }}"
+               [(ngModel)]="walletDetailInformation.walletBalance" #walletBalance="ngModel"
+               class="bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+               required/>
+        <div *ngIf="walletBalance.invalid && (walletBalance.dirty || walletBalance.touched)"
+             class="text-red-600 text-sm">
+          <div *ngIf="walletBalance.errors?.['required']">Balance is required.</div>
+        </div>
+      </div>
+      <div class="wallet-information-container">
+        <p class="wallet-information-title">Description (optional)</p>
+        <p [hidden]="isUpdated" class="wallet-information-value">{{ walletDetailInformation.walletDescription }}</p>
+        <input [hidden]="!isUpdated" type="text" id="walletDescription" name="walletDescription"
+               [(ngModel)]="walletDetailInformation.walletDescription"
+               class="bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+               required/>
+      </div>
+      <div *ngIf="walletDetailInformation.walletTypeId != 1" class="wallet-information-container">
+        <p class="wallet-information-title">Account number</p>
+        <p [hidden]="isUpdated"
+           class="wallet-information-value">{{ formatAndHideCardNumber(walletDetailInformation.walletNumber) }}</p>
+        <input [hidden]="!isUpdated" type="tel" id="walletNumber" name="walletNumber"
+               (input)="validateNumber($event)"
+               [(ngModel)]="walletDetailInformation.walletNumber" #walletNumber="ngModel"
+               class="bg-gray-50  border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-2/3 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+               required/>
+        <div *ngIf="walletNumber.invalid && (walletNumber.dirty || walletNumber.touched)" class="text-red-600 text-sm">
+          <div *ngIf="walletNumber.errors?.['required']">Number is required.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 pb-6">
+      <button
+        [hidden]="isUpdated"
+        (click)="handleToggleUpdateButtonClicked()"
+        class="text-white bg-[#299D91] font-medium rounded-md text-sm px-7 py-2.5 text-center me-2 mb-2">
+        Edit details
+      </button>
+      <button
+        [hidden]="!isUpdated"
+        (click)="handleUpdateButtonClicked()"
+        class="text-white bg-[#299D91] font-medium rounded-md text-sm px-7 py-2.5 text-center me-2 mb-2">
+        Update
+      </button>
+      <button
+        [hidden]="!isUpdated"
+        (click)="handleCancelButtonClicked()"
+        class="text-white bg-[#E73D1C] font-medium rounded-md text-sm px-7 py-2.5 text-center me-2 mb-2">
+        Cancel
+      </button>
+      <button class="text-[#525256] text-sm font-medium ml-4">
+        Remove
+      </button>
+    </div>
+  </div>
+
+
+  <div>
+    <div class="mt-8">
+      <p class="text-2xl font-normal text-[#9F9F9F]">Transaction history</p>
+
+      <div class="relative overflow-x-auto shadow-md sm:rounded-2xl bg-white">
+        <div *ngIf="walletTransactionListLoading" class="flex justify-center items-center h-screen">
+          <nz-spin nzSimple [nzSize]="'large'" nzTip="Loading..."></nz-spin>
+        </div>
+        <div *ngIf="!walletTransactionListLoading">
+          <div *ngIf="transactionItemsList.length == 0">
+            <nz-empty [nzNotFoundContent]="emptyText"></nz-empty>
+          </div>
+          <table *ngIf="transactionItemsList.length > 0"
+                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-sm text-center uppercase font-normal text-[#191919]">
+            <tr>
+              <th scope="col" class="px-6 py-3">
+                Date
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Transaction type
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Amount
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Category
+              </th>
+              <th scope="col" class="px-6 py-3">
+                Description
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of transactionItemsList"
+                class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {{ dayjs(item.transactionDate).format('DD/MMM/YYYY') }}
+              </th>
+              <td class="px-6 py-4">
+                {{ item.transactionTypeName }}
+              </td>
+              <td class="px-6 py-4 text-[#E73D1C]"
+                  [ngClass]="{'income-amount-text': item.transactionTypeName === 'Income'}">
+                {{ NumberFormat(item.transactionAmount) }}
+              </td>
+              <td class="px-6 py-4">
+                {{ item.transactionCategoryName }}
+              </td>
+              <td class="px-6 py-4">
+                {{ item.transactionDescription }}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-center my-4"
+               *ngIf="pagination && transactionItemsList.length > 0 && pagination.totalPages > 1">
+            <button
+              [disabled]="pagination.currentPage === 1"
+              (click)="pageChange(pagination.currentPage - 1)"
+              class="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+            >
+              Previous
+            </button>
+            <ng-container *ngFor="let page of [].constructor(pagination.totalPages); let index = index">
+              <button
+                (click)="pageChange(index + 1)"
+                [ngClass]="{
+      'bg-[#299D91] hover:bg-green-800 text-white': pagination.currentPage === index + 1,
+      'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600': pagination.currentPage !== index + 1
+    }"
+                class="px-4 py-2 mx-1 text-sm rounded-md"
+              >
+                {{ index + 1 }}
+              </button>
+            </ng-container>
+            <button
+              (click)="pageChange(pagination.currentPage + 1)"
+              [disabled]="pagination.currentPage === pagination.totalPages"
+              class="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

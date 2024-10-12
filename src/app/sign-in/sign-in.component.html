@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-[#f6f9fc] flex items-center justify-center p-4 sm:p-6 md:p-8">
+  <div class="w-full max-w-5xl bg-white rounded-2xl shadow-lg flex flex-col md:flex-row overflow-hidden">
+    <img src="https://res.cloudinary.com/dg9a4e1uw/image/upload/v1719891468/gupvzhs6t6eypj2gpvzs.jpg"
+         alt="welcome_image"
+         class="w-full md:w-1/2 h-64 md:h-auto rounded-t-2xl md:rounded-t-none md:rounded-l-2xl">
+    <div class="w-full md:w-1/2 p-6 flex flex-col justify-center">
+      <h1 class="font-bold text-lg text-gray-900 mb-6">Sign in</h1>
+      <form #signInForm="ngForm" (ngSubmit)="onSignInClick(signInForm)">
+        <div class="mb-5">
+          <label for="email" class="block mb-2 text-base font-medium text-gray-900 dark:text-white">Your email</label>
+          <input type="email" id="email" name="email" [(ngModel)]="model.email" #email="ngModel"
+                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                 placeholder="name@gmail.com" required/>
+          <div *ngIf="email.invalid && (email.dirty || email.touched)" class="text-red-600 text-sm">
+            <div *ngIf="email.errors?.['required']">Email is required.</div>
+            <div *ngIf="email.errors?.['email']">Enter a valid email address.</div>
+          </div>
+        </div>
+        <div class="mb-5">
+          <label for="password" class="block mb-2 text-base font-medium text-gray-900 dark:text-white">Your
+            password</label>
+          <input type="password" id="password" name="password" [(ngModel)]="model.password" #password="ngModel"
+                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                 required/>
+          <div *ngIf="password.invalid && (password.dirty || password.touched)"
+               class="text-red-600 text-sm">
+            <div *ngIf="password.errors?.['required']">Password is required.</div>
+            <div *ngIf="password.errors?.['minlength']">Password must be at least 6 characters long.</div>
+          </div>
+        </div>
+        <div class=" w-full flex justify-between mb-5 ">
+          <div class="flex items-center h-5">
+            <input id="remember" type="checkbox" value=""
+                   class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+                   required/>
+            <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+          </div>
+          <button class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Forgot password?</button>
+        </div>
+        <div class="text-base font-normal">Don't have an account?
+          <button (click)="onSignUpClick()" class="text-base font-medium text-gray-900 dark:text-gray-300">Sign up
+          </button>
+        </div>
+        <button type="submit"
+                class="text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Login
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <ng-template #customLoadingTemplate>
+    <div class="custom-class">
+    </div>
+  </ng-template>
+
+  <ngx-loading
+    [show]="loading"
+    [config]="{ backdropBorderRadius: '3px' }"
+    [template]="customLoadingTemplate"
+  ></ngx-loading>
+</div>

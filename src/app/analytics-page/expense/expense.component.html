@@ -1,0 +1,194 @@
+<div class="w-fit flex space-x-4">
+  <div>
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">From wallet</label>
+    <div class="relative">
+      <select [(ngModel)]="selectedWallet"
+              (ngModelChange)="onWalletChange()"
+              class="h-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option *ngFor="let wallet of walletList" [ngValue]="wallet">{{ wallet.walletName }}</option>
+      </select>
+    </div>
+  </div>
+  <div>
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Month</label>
+    <div class="relative">
+      <nz-date-picker nzMode="month" [(ngModel)]="date" (ngModelChange)="onChange($event)" [nzFormat]="monthFormat"
+                      class="h-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></nz-date-picker>
+
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-4 my-4">
+  <div class="lg:col-span-4 flex flex-col gap-4">
+    <div class="w-full text-gray-700 hover:text-gray-900 shadow-md bg-white rounded-xl flex flex-col">
+      <div *ngIf="breakingListLoading" class="flex justify-center items-center h-screen">
+        <nz-spin nzSimple [nzSize]="'large'" nzTip="Loading..."></nz-spin>
+      </div>
+      <div *ngIf="!breakingListLoading" class="p-6 flex flex-col items-center justify-center space-x-4 h-full w-full">
+        <h5 class="block mb-2 font-sans text-xl font-semibold leading-snug tracking-normal text-gray-900">
+          Expense breakdown
+        </h5>
+        <div class="card flex justify-content-center">
+          <p-chart type="doughnut" [data]="expenseData" [options]="options"/>
+        </div>
+
+        <ul class="mt-4 w-full">
+          <li *ngFor="let item of breakDownList; let i = index"
+              class="border-b-2 text-base font-medium flex justify-between py-4">
+            <p>
+              <fa-icon [icon]="faCircle"
+                       size="lg"
+                       [ngStyle]="{'color': colors.get(item.budgetName)}"
+                       class="transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+              </fa-icon>
+              <span class="text-[#2C3E50] pl-2">{{ item.budgetName }}</span>
+            </p>
+            <h5>
+              <span class="text-[#2C3E50]">{{ NumberFormat(item.totalAmount) }}</span>
+            </h5>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="lg:col-span-8 flex flex-col gap-4">
+    <div
+      class="flex flex-col justify-between items-center rounded-lg border-2 dark:bg-gray-800 bg-white p-4">
+      <div class="flex justify-between items-center w-full mb-4">
+        <h5 class="block font-sans text-xl font-semibold leading-snug tracking-normal text-gray-900 mx-5">
+          Transaction history
+        </h5>
+        <button type="button"
+                (click)="toggleModelCreate()"
+                class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+          Add new expense
+        </button>
+      </div>
+      <div *ngIf="expenseListLoading" class="flex justify-center items-center">
+        <nz-spin nzSimple [nzSize]="'large'" nzTip="Loading..."></nz-spin>
+      </div>
+      <div *ngIf="!expenseListLoading" class="w-full">
+        <div *ngIf="expenseList.length == 0">
+          <nz-empty [nzNotFoundContent]="emptyText"></nz-empty>
+        </div>
+        <table *ngIf="expenseList.length > 0"
+               class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Date
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Description
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Amount
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Wallet
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Category
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Budget
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            *ngFor="let item of expenseList"
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ dayjs(item.expenseDate).format('DD/MMM/YYYY') }}
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ truncateText(item.expenseDescription, 20) }}
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ NumberFormat(item.expenseAmount) }}
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ item.fromWalletName }}
+            </td>
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ item.expenseTypeName }}
+            </th>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ item.fromBudgetName }}
+            </td>
+            <td class="text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <button type="button"
+                      (click)="selectExpenseItemEdit(item.expenseId)"
+                      class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Edit
+              </button>
+            </td>
+          </tr>
+          <tr class="bg-gray-100 dark:bg-gray-700">
+            <td colspan="4" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white text-right">
+              Total Expense:
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ NumberFormat(totalExpense) }}
+            </td>
+            <td></td> <!-- Empty cell for the last column -->
+          </tr>
+          </tbody>
+        </table>
+        <div class="flex justify-center mt-4" *ngIf="pagination">
+          <button
+            [disabled]="pagination.currentPage === 1"
+            (click)="pageChange(pagination.currentPage - 1)"
+            class="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+          >
+            Previous
+          </button>
+          <ng-container *ngFor="let page of [].constructor(pagination.totalPages); let index = index">
+            <button
+              (click)="pageChange(index + 1)"
+              [ngClass]="{
+      'bg-green-700 hover:bg-green-800 text-white': pagination.currentPage === index + 1,
+      'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600': pagination.currentPage !== index + 1
+    }"
+              class="px-4 py-2 mx-1 text-sm rounded-md"
+            >
+              {{ index + 1 }}
+            </button>
+          </ng-container>
+          <button
+            (click)="pageChange(pagination.currentPage + 1)"
+            [disabled]="pagination.currentPage === pagination.totalPages"
+            class="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+          >
+            Next
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isModalCreateOpen" (click)="handleModalCreateOverlayClick($event)"
+       class="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50">
+    <app-expense-create
+      [isModalCreateOpen]="isModalCreateOpen"
+      (closeModal)="toggleModelCreate()"
+      (expenseCreated)="onExpenseCreated()"
+      class="w-2/5"></app-expense-create>
+  </div>
+
+  <div *ngIf="isModalUpdateOpen" (click)="handleModalUpdateOverlayClick($event)"
+       class="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50">
+    <app-expense-update
+      [isModalUpdateOpen]="isModalCreateOpen"
+      [expenseId]="expenseIdSelected"
+      (closeModal)="toggleModelUpdate()"
+      (expenseModified)="onExpenseCreated()"
+      class="w-2/5"></app-expense-update>
+  </div>
+
+  <ng-template #customLoadingTemplate>
+    <nz-spin nzSimple [nzSize]="'large'" nzTip="Loading..."></nz-spin>
+  </ng-template>
+</div>

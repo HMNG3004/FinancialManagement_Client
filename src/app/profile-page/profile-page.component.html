@@ -1,0 +1,71 @@
+<div class="dark:border-gray-700">
+  <h1 class="text-3xl font-bold text-gray-800">Your information</h1>
+  <p class="text-lg font-normal text-gray-700">Welcome to IFM Financial Management</p>
+
+  <div class="flex w-full justify-center my-4">
+    <div class="bg-white rounded-lg w-4/5 p-4 flex flex-col lg:flex-row justify-between">
+      <div class="flex flex-col items-center">
+        <div class="relative">
+          <img
+            class="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full"
+            src="https://res.cloudinary.com/dg9a4e1uw/image/upload/v1728717178/nqapbv6li3gtff3t5gvn.png"
+            alt="User Avatar"
+          />
+          <button class="absolute bottom-0 left-20 sm:left-28 md:left-32">
+            <lucide-angular name="pencil-line" class="w-6 h-6 sm:w-8 sm:h-8 text-gray-600"></lucide-angular>
+          </button>
+        </div>
+        <div class="mt-4 sm:mt-0 sm:ml-6 text-center sm:text-left">
+          <div class="text-lg text-gray-500">Nguyễn Văn Hoàng Minh</div>
+        </div>
+      </div>
+      <div class="w-full lg:w-4/5">
+        <form [formGroup]='accountForm' (ngSubmit)="accountForm.valid && changeInformation()" autocomplete="off"
+              class="flex flex-col justify-between">
+          <div class="grid gap-6 mb-6 md:grid-cols-2">
+            <div>
+              <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Your name
+              </label>
+              <input type="text" id="first_name"
+                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     formControlName="accountName"/>
+              <div *ngIf="accountForm.get('accountName')?.touched && accountForm.get('accountName')?.invalid"
+                   class="text-red-600 text-sm mt-1">
+                Account Name is required.
+              </div>
+            </div>
+            <div>
+              <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Email
+              </label>
+              <input type="text" id="email"
+                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                     formControlName="email"/>
+              <div *ngIf="accountForm.get('email')?.touched && accountForm.get('email')?.invalid"
+                   class="text-red-600 text-sm mt-1">
+                <span *ngIf="accountForm.get('email')?.hasError('required')">Email is required.</span>
+                <span *ngIf="accountForm.get('email')?.hasError('email')">Invalid email format.</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex w-full justify-end">
+            <div class="flex gap-4">
+              <button type="submit"
+                      class="flex items-center text-white bg-[#299D91] font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 disabled:opacity-75"
+                      [disabled]="accountForm.invalid">
+                Submit
+              </button>
+              <button type="button"
+                      (click)="handleNavigation()"
+                      class="flex items-center text-white bg-[#299D91] font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 disabled:opacity-75">
+                Change password
+              </button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

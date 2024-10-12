@@ -1,0 +1,191 @@
+<div class="dark:border-gray-700">
+  <h1 class="text-3xl font-bold text-gray-800">Budget details</h1>
+  <p class="text-lg font-normal text-gray-700">Welcome to IFM Financial Management</p>
+
+  <div class="bg-white shadow-xl rounded-lg">
+    <div class="grid grid-cols-2 lg:grid-cols-3 space-x-4 px-6 py-3">
+      <div class="flex flex-col col-span-2 lg:col-span-1 items-center space-y-3">
+        <nz-progress
+          [nzPercent]="getFormattedPercentage(budgetDetailInformation?.currentMonthExpense,budgetDetailInformation?.totalBalance)"
+          nzType="circle" nzStrokeColor="#299D91"></nz-progress>
+        <div class="text-sm font-semibold text-gray-600">
+          Remaining: {{ NumberFormat((budgetDetailInformation?.totalBalance ?? 0) - (budgetDetailInformation?.currentMonthExpense ?? 0)) }}
+        </div>
+      </div>
+
+      <div class="col-span-2 flex flex-col items-center justify-around">
+        <div class="grid grid-cols-1 md:grid-cols-2 w-full">
+          <div class="flex flex-col w-full md:w-3/4 justify-between">
+            <div class="flex w-full items-center justify-between">
+              <div class="text-lg font-normal text-[#9F9F9F]">
+                Budget name:
+              </div>
+              <div class="font-semibold text-lg text-[#666666]">
+                {{ budgetDetailInformation?.budgetName }}
+              </div>
+            </div>
+
+            <div class="flex w-full items-center justify-between">
+              <div class="text-lg font-normal text-[#9F9F9F]">
+                Last modify:
+              </div>
+              <div class="font-semibold text-lg text-[#666666]">
+                {{ dayjs(budgetDetailInformation?.dateModified).format('DD/MM/YYYY HH:mm:ss') }}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col w-full md:w-3/4 justify-between">
+            <div class="flex w-full items-center justify-between">
+              <div class="text-lg font-normal text-[#9F9F9F]">
+                Amount:
+              </div>
+              <div class="font-semibold text-lg text-[#666666]" title="Total budget amount">
+                {{ NumberFormat(budgetDetailInformation?.totalBalance) }}
+              </div>
+            </div>
+
+            <div class="flex w-full items-center justify-between">
+              <div class="text-lg font-normal text-[#9F9F9F]">
+                Current spend:
+              </div>
+              <div class="font-semibold text-lg text-[#666666]" title="Total amount spent">
+                {{ NumberFormat(budgetDetailInformation?.currentMonthExpense) }}
+              </div>
+            </div>
+
+            <div class="flex w-full items-center justify-between">
+              <div class="text-lg font-normal text-[#9F9F9F]">
+                End of Month:
+              </div>
+              <div class="font-semibold text-lg text-[#666666]" title="Budget end date">
+                {{ budgetDetailInformation?.month }} / {{ budgetDetailInformation?.year }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="lg:w-3/4 w-full flex items-center mt-4">
+          <div class="flex justify-center lg:justify-end w-full">
+            <button
+              [hidden]="isUpdated"
+              (click)="handleToggleUpdateButtonClicked()"
+              class="text-white bg-[#299D91] font-medium rounded-md text-sm px-7 py-2.5 text-center me-2">
+              Edit details
+            </button>
+            <button
+              [hidden]="!isUpdated"
+              (click)="handleToggleUpdateButtonClicked()"
+              class="text-white bg-[#299D91] font-medium rounded-md text-sm px-7 py-2.5 text-center me-2">
+              Update
+            </button>
+            <button
+              [hidden]="!isUpdated"
+              (click)="handleToggleUpdateButtonClicked()"
+              class="text-white bg-[#E73D1C] font-medium rounded-md text-sm px-7 py-2.5 text-center me-2">
+              Cancel
+            </button>
+            <button class="text-white bg-[#E73D1C] font-medium rounded-md text-sm px-7 py-2.5 text-center">
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8">
+    <p class="text-2xl font-normal text-[#9F9F9F]">Transaction history</p>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-2xl bg-white">
+      <div *ngIf="budgetTransactionListLoading" class="flex justify-center items-center h-screen">
+        <nz-spin nzSimple [nzSize]="'large'" nzTip="Loading..."></nz-spin>
+      </div>
+      <div *ngIf="!budgetTransactionListLoading">
+        <div *ngIf="budgetItemList.length == 0">
+          <nz-empty [nzNotFoundContent]="emptyText"></nz-empty>
+        </div>
+
+        <table *ngIf="budgetItemList.length > 0"
+               class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead class="text-sm text-center uppercase font-normal text-[#191919]">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Date
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Transaction type
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Amount
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Category
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Description
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Wallet
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of budgetItemList"
+              class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ dayjs(item.transactionDate).format('DD/MMM/YYYY') }}
+            </th>
+            <td class="px-6 py-4">
+              {{ item.transactionTypeName }}
+            </td>
+            <td class="px-6 py-4 text-[#E73D1C]"
+                [ngClass]="{'income-amount-text': item.transactionTypeName === 'Income'}">
+              {{ NumberFormat(item.transactionAmount) }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.transactionCategoryName }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.transactionDescription }}
+            </td>
+            <td class="px-6 py-4">
+              {{ item.transactionWalletName }}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="flex justify-center my-4"
+             *ngIf="pagination && budgetItemList.length > 0 && pagination.totalPages > 1">
+          <button
+            [disabled]="pagination.currentPage === 1"
+            (click)="pageChange(pagination.currentPage - 1)"
+            class="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+          >
+            Previous
+          </button>
+          <ng-container *ngFor="let page of [].constructor(pagination.totalPages); let index = index">
+            <button
+              (click)="pageChange(index + 1)"
+              [ngClass]="{
+      'bg-[#299D91] hover:bg-green-800 text-white': pagination.currentPage === index + 1,
+      'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600': pagination.currentPage !== index + 1
+    }"
+              class="px-4 py-2 mx-1 text-sm rounded-md"
+            >
+              {{ index + 1 }}
+            </button>
+          </ng-container>
+          <button
+            (click)="pageChange(pagination.currentPage + 1)"
+            [disabled]="pagination.currentPage === pagination.totalPages"
+            class="px-4 py-2 mx-1 text-sm text-gray-700 bg-gray-200 rounded-md dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

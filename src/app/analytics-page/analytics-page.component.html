@@ -1,0 +1,22 @@
+<div class="dark:border-gray-700">
+  <h1 class="text-3xl font-bold text-gray-800">Analytics</h1>
+  <p class="text-lg font-normal text-gray-700">Welcome to IFM Financial Management</p>
+
+  <div class="block my-4">
+    <button *ngFor="let item of featureLabelList"
+            (click)="handleFeatureItemClick(item.id)"
+            class="text-[#2C3E50] text-lg font-medium mr-4">{{ item.label }}
+    </button>
+  </div>
+
+  <div [ngSwitch]="selectedFeature">
+    <app-analytics *ngSwitchCase="1"></app-analytics>
+    <app-expense *ngSwitchCase="2"></app-expense>
+    <app-income *ngSwitchCase="3"></app-income>
+    <app-income-vs-expense *ngSwitchCase="4"></app-income-vs-expense>
+    <app-balance *ngSwitchCase="5"></app-balance>
+    <app-transaction-history *ngSwitchCase="6"></app-transaction-history>
+    <!-- Add other components or content here as needed -->
+  </div>
+
+</div>

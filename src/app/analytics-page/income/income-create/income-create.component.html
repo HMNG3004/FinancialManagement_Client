@@ -1,0 +1,62 @@
+<div class="bg-white rounded-lg p-4 w-full flex flex-col items-center">
+  <!-- Modal header -->
+  <div class="w-full flex items-center justify-between border-b rounded-t dark:border-gray-600">
+    <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+      Create new income
+    </h3>
+    <button type="button"
+            (click)="close()"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            data-modal-hide="extra-large-modal">
+      <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+      </svg>
+      <span class="sr-only">Close modal</span>
+    </button>
+  </div>
+  <!-- Modal body -->
+  <div class="flex flex-col w-3/4 mt-4">
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+    <div class="relative mb-4">
+      <button (click)="toggleDropdown()"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 text-left dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        {{ selectedCategory ? selectedCategory.incomeTypeName : 'Choose a category' }}
+      </button>
+      <div *ngIf="isDropdownOpen"
+           class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg dark:bg-gray-700 dark:border-gray-600">
+        <input type="text" placeholder="Create new category" [(ngModel)]="newIncomeCategory"
+               (keydown.enter)="CreateNewIncomeCategory()"
+               class="bg-gray-50 border-b border-gray-300 text-gray-900 text-sm rounded-t-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <ul>
+          <li *ngFor="let item of incomeCategoryList" (click)="selectCategory(item)"
+              class="px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+            {{ item.incomeTypeName }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">To wallet</label>
+    <div class="relative mb-4">
+      <select [(ngModel)]="selectedWallet"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option *ngFor="let wallet of walletList" [ngValue]="wallet">{{ wallet.walletName }}</option>
+      </select>
+    </div>
+
+    <label for="expenseDate" class="block text-sm font-medium text-gray-700 dark:text-white">Select a Date</label>
+    <input type="date" id="expenseDate" [(ngModel)]="incomeDate"
+           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+           required>
+    <label for="expenseAmount" class="block text-sm font-medium text-gray-700 dark:text-white">Amount</label>
+    <input type="number" id="expenseAmount" [(ngModel)]="incomeAmount"
+           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5 mb-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+           required>
+    <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+    <textarea id="message" rows="4" [(ngModel)]="incomeDescription"
+              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Write your thoughts here..."></textarea>
+    <button (click)="createIncome()" class="mt-4 bg-blue-500 text-white p-2 rounded-lg">Create Expense</button>
+  </div>
+</div>

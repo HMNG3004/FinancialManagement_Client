@@ -1,0 +1,23 @@
+.wallet-information-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.wallet-information-title {
+  font-weight: 400;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: #9F9F9F
+}
+
+.wallet-information-value {
+  font-weight: 700;
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.75rem; /* 28px */
+  color: #666666
+}
+
+.income-amount-text {
+  color: #339d29
+}

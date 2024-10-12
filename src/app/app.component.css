@@ -1,0 +1,10 @@
+.container {
+  display: flex; /* Might be needed depending on your styles */
+  height: 100vh; /* Set container height to 100 viewport height */
+  margin: 0 auto; /* Apply top and bottom margins with auto */
+}
+
+.container > * { /* Target all direct children */
+  margin: auto 0; /* Apply left and right margins with auto */
+}
+

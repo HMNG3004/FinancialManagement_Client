@@ -1,0 +1,119 @@
+<div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-4 my-4">
+  <div class="lg:col-span-4 flex flex-col gap-4">
+    <div class="w-full text-gray-700 hover:text-gray-900 shadow-md bg-white rounded-xl flex flex-col">
+      <div class="p-6 flex flex-col items-center justify-center space-x-4 h-full w-full">
+        <h5 class="block mb-2 font-sans text-xl font-semibold leading-snug tracking-normal text-gray-900">
+          Income breakdown
+        </h5>
+        <div class="card flex justify-content-center">
+          <p-chart type="doughnut" [data]="incomeData" [options]="options"/>
+        </div>
+
+        <ul class="mt-4 w-full">
+          <li *ngFor="let item of breakDownList; let i = index"
+              class="border-b-2 text-base font-medium flex justify-between py-4">
+            <p>
+              <fa-icon [icon]="faCircle"
+                       size="lg"
+                       [ngStyle]="{'color': colors[i % colors.length]}"
+                       class="transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+              </fa-icon>
+              <span class="text-[#2C3E50] pl-2">{{ item.categoryName }}</span>
+            </p>
+            <h5>
+              <span class="text-[#2C3E50]">{{ NumberFormat(item.totalAmount) }}</span>
+            </h5>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="lg:col-span-8 flex flex-col gap-4">
+    <div
+      class="flex flex-col justify-between items-center rounded-lg border-2 dark:bg-gray-800 bg-white p-4">
+      <div class="flex justify-between items-center w-full mb-4">
+        <h5 class="block font-sans text-xl font-semibold leading-snug tracking-normal text-gray-900 mx-5">
+          Transaction history
+        </h5>
+        <button type="button"
+                (click)="toggleModelCreate()"
+                class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">
+          Add new income
+        </button>
+      </div>
+
+      <div class="w-full">
+        <div *ngIf="incomeList.length == 0">
+          <nz-empty [nzNotFoundContent]="emptyText"></nz-empty>
+        </div>
+        <table *ngIf="incomeList.length > 0"
+               class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">
+              Category
+            </th>
+            <th scope="col" class="px-6 py-3">
+              From wallet
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Date
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Description
+            </th>
+            <th scope="col" class="px-6 py-3">
+              Amount
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of incomeList" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ item.incomeTypeName }}
+            </th>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ item.toWalletName }}
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ dayjs(item.incomeDate).format('DD/MMM/YYYY') }}
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ item.incomeDescription }}
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ NumberFormat(item.incomeAmount) }}
+            </td>
+            <td class="text-center font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <button type="button"
+                      (click)="selectIncomeItemEdit(item.incomeId)"
+                      class="px-3 py-2 text-xs font-medium text-center inline-flex items-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Edit
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isModalCreateOpen" (click)="handleModalCreateOverlayClick($event)"
+       class="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50">
+    <app-income-create
+      [isModalCreateOpen]="isModalCreateOpen"
+      (closeModal)="toggleModelCreate()"
+      (incomeCreated)="onIncomeCreated()"
+      class="w-2/5"></app-income-create>
+  </div>
+
+  <div *ngIf="isModalUpdateOpen" (click)="handleModalUpdateOverlayClick($event)"
+       class="fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 max-h-full inset-0 overflow-x-hidden overflow-y-auto flex bg-black bg-opacity-50">
+    <app-income-update
+      [isModalUpdateOpen]="isModalUpdateOpen"
+      [expenseId]="incomeIdSelected"
+      (closeModal)="toggleModelUpdate()"
+      (incomeModified)="onIncomeCreated()"
+      class="w-2/5"></app-income-update>
+  </div>
+</div>
