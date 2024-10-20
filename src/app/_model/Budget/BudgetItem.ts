@@ -1,7 +1,7 @@
 export interface BudgetItem {
   budgetId: number;
   budgetName: string;
-  budgetAmount: number;
+  budgetBalance: number;
   currentSpent: number;
   walletName: "string"
 }
